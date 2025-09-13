@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun add:*)",
+      "Bash(bunx hardhat:*)",
+      "Bash(npm pkg set:*)",
+      "Bash(npm pkg delete:*)",
+      "Bash(bunx shadcn@latest add:*)",
+      "Bash(bun run:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
