@@ -13,9 +13,11 @@ interface LandingProps {
   onCreateLobby: (stakeAmount: string) => void;
   onJoinLobby: (lobbyId: string) => void;
   isCreatingLobby?: boolean;
+  demoMode?: boolean;
+  onToggleDemoMode?: () => void;
 }
 
-export function Landing({ onCreateLobby, onJoinLobby, isCreatingLobby = false }: LandingProps) {
+export function Landing({ onCreateLobby, onJoinLobby, isCreatingLobby = false, demoMode = true, onToggleDemoMode }: LandingProps) {
   const [joinLobbyId, setJoinLobbyId] = useState("");
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -37,7 +39,12 @@ export function Landing({ onCreateLobby, onJoinLobby, isCreatingLobby = false }:
   };
 
   const handleJoinLobby = () => {
-    if (joinLobbyId.trim()) {
+    if (demoMode) {
+      // Demo mode - use demo lobby ID
+      onJoinLobby("demo_lobby_123");
+      setShowJoinDialog(false);
+      setJoinLobbyId("");
+    } else if (joinLobbyId.trim()) {
       onJoinLobby(joinLobbyId.trim());
       setShowJoinDialog(false);
       setJoinLobbyId("");
@@ -80,7 +87,7 @@ export function Landing({ onCreateLobby, onJoinLobby, isCreatingLobby = false }:
             <DialogTrigger asChild>
               <Button 
                 className="w-full h-12 text-lg bg-blue-600 hover:bg-blue-700"
-                disabled={!isConnected || !isCorrectNetwork}
+                disabled={demoMode ? false : (!isConnected || !isCorrectNetwork)}
               >
                 Start Lobby
               </Button>
@@ -122,7 +129,7 @@ export function Landing({ onCreateLobby, onJoinLobby, isCreatingLobby = false }:
               <Button 
                 variant="outline" 
                 className="w-full h-12 text-lg border-gray-600 text-white hover:bg-gray-800"
-                disabled={!isConnected || !isCorrectNetwork}
+                disabled={demoMode ? false : (!isConnected || !isCorrectNetwork)}
               >
                 Join Lobby
               </Button>
@@ -153,8 +160,8 @@ export function Landing({ onCreateLobby, onJoinLobby, isCreatingLobby = false }:
             </DialogContent>
           </Dialog>
 
-          {/* Connect wallet button */}
-          {!isConnected && (
+          {/* Connect wallet button - hidden in demo mode */}
+          {!demoMode && !isConnected && (
             <Button 
               onClick={handleConnectWallet}
               variant="outline" 
@@ -164,8 +171,8 @@ export function Landing({ onCreateLobby, onJoinLobby, isCreatingLobby = false }:
             </Button>
           )}
 
-          {/* Network warning */}
-          {isConnected && !isCorrectNetwork && (
+          {/* Network warning - hidden in demo mode */}
+          {!demoMode && isConnected && !isCorrectNetwork && (
             <div className="bg-red-900/30 border border-red-700 rounded-lg p-4 space-y-3">
               <div className="flex items-center space-x-2 text-red-400">
                 <AlertTriangle className="w-5 h-5" />
@@ -191,8 +198,8 @@ export function Landing({ onCreateLobby, onJoinLobby, isCreatingLobby = false }:
             </div>
           )}
 
-          {/* Wallet status and disconnect */}
-          {isConnected && (
+          {/* Wallet status and disconnect - hidden in demo mode */}
+          {!demoMode && isConnected && (
             <div className="mt-4 space-y-2">
               <div className="flex items-center justify-center space-x-2">
                 <p className="text-sm text-gray-400">
@@ -253,13 +260,31 @@ export function Landing({ onCreateLobby, onJoinLobby, isCreatingLobby = false }:
         <div className="text-sm text-gray-400 space-y-2 mt-8">
           <p>Welcome to SUS - Onchain Social Deduction</p>
           <p>Host sets stake amount • Min 3 players • Max 10 players</p>
-          <p className="text-blue-400 text-xs">
-            🌐 Base Sepolia Testnet
-          </p>
-          {!isConnected && (
-            <p className="text-yellow-400 text-xs mt-2">
-              ⚠️ Connect your wallet to start playing
+          {demoMode ? (
+            <p className="text-green-400 text-xs">
+              🎮 Demo Mode - No wallet required!
             </p>
+          ) : (
+            <>
+              <p className="text-blue-400 text-xs">
+                🌐 Base Sepolia Testnet
+              </p>
+              {!isConnected && (
+                <p className="text-yellow-400 text-xs mt-2">
+                  ⚠️ Connect your wallet to start playing
+                </p>
+              )}
+            </>
+          )}
+          
+          {/* Demo Mode Toggle */}
+          {onToggleDemoMode && (
+            <button
+              onClick={onToggleDemoMode}
+              className="text-xs text-gray-500 hover:text-gray-300 underline mt-4"
+            >
+              {demoMode ? "Switch to Production Mode" : "Switch to Demo Mode"}
+            </button>
           )}
         </div>
       </div>

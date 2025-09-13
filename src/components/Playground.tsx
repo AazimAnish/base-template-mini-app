@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "~/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/Card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/Dialog";
+import { ChatInterface } from "~/components/ChatInterface";
 import { useAccount } from "wagmi";
 
 interface Player {
@@ -85,16 +86,12 @@ export function Playground({
 
         {/* Chat Area */}
         <Card className="bg-gray-900 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white text-lg">Discussion</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-gray-800 p-4 rounded min-h-[120px] flex items-center justify-center">
-              <div className="text-center text-gray-400">
-                <p className="text-sm mb-2">💬 Chat coming soon</p>
-                <p className="text-xs">For now, use voice chat or external messaging</p>
-              </div>
-            </div>
+          <CardContent className="p-0">
+            <ChatInterface 
+              players={players}
+              userRole={userRole}
+              onSendMessage={(message) => console.log("Message sent:", message)}
+            />
           </CardContent>
         </Card>
 
@@ -232,6 +229,12 @@ export function Playground({
               <p>• Work together with other crew</p>
               <p>• Don't let them rug the pot!</p>
             </>
+          )}
+          {gameId.startsWith('demo_') && (
+            <div className="mt-3 p-2 bg-yellow-900/30 border border-yellow-700 rounded">
+              <p className="text-yellow-400 text-xs font-semibold">🎮 Demo Mode</p>
+              <p className="text-yellow-300 text-xs">Voting will start automatically!</p>
+            </div>
           )}
         </div>
       </div>

@@ -33,17 +33,7 @@ export function Vote({
   votedFor
 }: VoteProps) {
   const [selectedPlayer, setSelectedPlayer] = useState<string>("");
-  const [countdown, setCountdown] = useState(timeLeft);
   const { address } = useAccount();
-
-  useEffect(() => {
-    if (countdown > 0) {
-      const timer = setInterval(() => {
-        setCountdown(prev => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [countdown]);
 
   const alivePlayers = players.filter(p => p.isAlive);
 
@@ -58,7 +48,7 @@ export function Vote({
     return `${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, '0')}`;
   };
 
-  const isTimeUp = countdown <= 0;
+  const isTimeUp = timeLeft <= 0;
   const canVote = !hasVoted && selectedPlayer && !isTimeUp;
 
   return (
@@ -72,14 +62,14 @@ export function Vote({
 
         {/* Timer */}
         <Card className={`border-2 ${
-          countdown <= 10 ? "border-red-500 bg-red-900/20" : "border-yellow-500 bg-yellow-900/20"
+          timeLeft <= 10 ? "border-red-500 bg-red-900/20" : "border-yellow-500 bg-yellow-900/20"
         }`}>
           <CardContent className="pt-6">
             <div className="text-center">
               <div className={`text-4xl font-bold ${
-                countdown <= 10 ? "text-red-400" : "text-yellow-400"
+                timeLeft <= 10 ? "text-red-400" : "text-yellow-400"
               }`}>
-                {formatTime(countdown)}
+                {formatTime(timeLeft)}
               </div>
               <p className="text-sm text-gray-400 mt-2">
                 {isTimeUp ? "Voting ended!" : "Time left to vote"}

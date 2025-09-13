@@ -45,6 +45,16 @@ export default function SUSGame() {
   const [isCreatingLobby, setIsCreatingLobby] = useState(false);
   const [isStartingGame, setIsStartingGame] = useState(false);
   const [pendingGameId, setPendingGameId] = useState<string | null>(null);
+  const [demoMode, setDemoMode] = useState(true); // Demo mode - no real transactions
+  
+  const toggleDemoMode = () => {
+    setDemoMode(prev => !prev);
+    // Reset game state when switching modes
+    setGameInfo(null);
+    setCurrentScreen("landing");
+    setError(null);
+  };
+  const [demoStep, setDemoStep] = useState(0);
 
   const { address, isConnected } = useAccount();
   const { writeContract, data: hash, isPending } = useWriteContract();
@@ -161,6 +171,20 @@ export default function SUSGame() {
     }
   }, [gameStateData, currentScreen, address, processedPlayers]);
 
+  // Demo mode navigation effect - handles screen transitions when not using contract
+  useEffect(() => {
+    if (demoMode && gameInfo) {
+      // Navigate based on game state in demo mode
+      if (gameInfo.state === GameState.PLAYING && currentScreen !== "playground") {
+        setCurrentScreen("playground");
+      } else if (gameInfo.state === GameState.VOTING && currentScreen !== "vote") {
+        setCurrentScreen("vote");
+      } else if (gameInfo.state === GameState.ENDED && currentScreen !== "gameEnd") {
+        setCurrentScreen("gameEnd");
+      }
+    }
+  }, [demoMode, gameInfo?.state, currentScreen]);
+
   useEffect(() => {
     if (userRoleData !== undefined) {
       setGameInfo(prev => prev ? {
@@ -171,29 +195,81 @@ export default function SUSGame() {
   }, [userRoleData]);
 
   const handleCreateLobby = async (stakeAmount: string) => {
+    if (demoMode) {
+      // Demo Mode - No real transactions
+      setIsCreatingLobby(true);
+      
+      // Simulate loading
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const timestamp = Date.now();
+      const lobbyId = `demo_${timestamp}`;
+      
+      setGameInfo({
+        gameId: lobbyId,
+        isHost: true,
+        players: [
+          { address: "0x1234...5678 (You)", index: 1, isAlive: true },
+          { address: "0xabcd...ef01", index: 2, isAlive: true },
+          { address: "0x9876...5432", index: 3, isAlive: true }
+        ],
+        pot: (parseFloat(stakeAmount) * 3).toString(),
+        state: GameState.PLAYING,
+        hasStaked: true,
+        hasVoted: false,
+        voteTimeLeft: 0,
+        stakeAmount,
+        userRole: Math.random() > 0.5 ? "IMPOSTER" : "CREW"
+      });
+      
+      setCurrentScreen("playground");
+      setIsCreatingLobby(false);
+      
+      // Auto-start vote after 5 seconds
+      setTimeout(() => {
+        setGameInfo(prev => prev ? {
+          ...prev,
+          state: GameState.VOTING,
+          voteTimeLeft: 30
+        } : null);
+        
+        // Start countdown
+        const countdown = setInterval(() => {
+          setGameInfo(prev => {
+            if (!prev || prev.voteTimeLeft <= 1) {
+              clearInterval(countdown);
+              // Auto-end voting when time runs out
+              if (prev && prev.voteTimeLeft <= 1) {
+                return { ...prev, state: GameState.ENDED };
+              }
+              return prev;
+            }
+            return { ...prev, voteTimeLeft: prev.voteTimeLeft - 1 };
+          });
+        }, 1000);
+      }, 5000);
+      
+      return;
+    }
+    
+    // Original wallet-based logic (kept for production use)
     if (!address) return;
     
     setIsCreatingLobby(true);
     try {
-      // Generate a simple lobby ID - the contract will generate the actual gameId
       const timestamp = Date.now();
       const lobbyId = `lobby_${timestamp}`;
       const stakeAmountWei = parseEther(stakeAmount);
       
       console.log("Creating lobby with:", { lobbyId, stakeAmount });
       
-      // Call createGame with lobbyId - contract will return the actual gameId
       await writeContract({
         address: SUS_GAME_CONTRACT_ADDRESS,
         abi: SUS_GAME_ABI,
         functionName: "createGame",
-        args: [lobbyId, stakeAmountWei], // lobbyId first, then stake amount
+        args: [lobbyId, stakeAmountWei],
       });
 
-      console.log("Create lobby transaction submitted");
-      
-      // Generate a bytes32 gameId from the lobbyId for testing
-      // In production, you'd use the actual returned gameId from the transaction
       const encoder = new TextEncoder();
       const lobbyBytes = encoder.encode(lobbyId.padEnd(32, '0'));
       const gameIdBytes32 = `0x${Array.from(lobbyBytes).map(b => b.toString(16).padStart(2, '0')).join('').padEnd(64, '0')}`;
@@ -201,26 +277,20 @@ export default function SUSGame() {
       setGameInfo({
         gameId: gameIdBytes32,
         isHost: true,
-        players: [], // Start with empty - host needs to stake to join
+        players: [],
         pot: "0",
         state: GameState.LOBBY,
-        hasStaked: false, // Host needs to stake too
+        hasStaked: false,
         hasVoted: false,
         voteTimeLeft: 0,
         stakeAmount
       });
       
-      // Save the mapping for other players to use
       const savedGameIds = JSON.parse(localStorage.getItem('susGameIds') || '{}');
       savedGameIds[lobbyId] = gameIdBytes32;
       localStorage.setItem('susGameIds', JSON.stringify(savedGameIds));
       
-      console.log("Created game mapping:", { lobbyId, gameId: gameIdBytes32 });
-      
       setCurrentScreen("lobby");
-      
-      // Store the lobbyId for sharing
-      console.log("Share this lobby ID with other players:", lobbyId);
       
     } catch (err) {
       console.error("Failed to create lobby:", err);
@@ -232,12 +302,62 @@ export default function SUSGame() {
 
 
   const handleJoinLobby = async (lobbyId: string) => {
+    if (demoMode) {
+      // Demo Mode - Skip directly to playground with mock data
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setGameInfo({
+        gameId: lobbyId,
+        isHost: false,
+        players: [
+          { address: "0x9999...1111 (Host)", index: 1, isAlive: true },
+          { address: "0xabcd...ef01", index: 2, isAlive: true },
+          { address: "0x1234...5678 (You)", index: 3, isAlive: true }
+        ],
+        pot: "0.0003", // 3 players × 0.0001 ETH
+        state: GameState.PLAYING,
+        hasStaked: true,
+        hasVoted: false,
+        voteTimeLeft: 0,
+        stakeAmount: "0.0001",
+        userRole: Math.random() > 0.5 ? "IMPOSTER" : "CREW"
+      });
+      
+      setCurrentScreen("playground");
+      
+      // Auto-start vote after 5 seconds
+      setTimeout(() => {
+        setGameInfo(prev => prev ? {
+          ...prev,
+          state: GameState.VOTING,
+          voteTimeLeft: 30
+        } : null);
+        
+        // Start countdown
+        const countdown = setInterval(() => {
+          setGameInfo(prev => {
+            if (!prev || prev.voteTimeLeft <= 1) {
+              clearInterval(countdown);
+              // Auto-end voting when time runs out
+              if (prev && prev.voteTimeLeft <= 1) {
+                return { ...prev, state: GameState.ENDED };
+              }
+              return prev;
+            }
+            return { ...prev, voteTimeLeft: prev.voteTimeLeft - 1 };
+          });
+        }, 1000);
+      }, 5000);
+      
+      return;
+    }
+    
+    // Original wallet-based logic
     if (!address) return;
     
     try {
       console.log("Attempting to join lobby:", lobbyId);
       
-      // Look up the actual gameId for this lobbyId
       const savedGameIds = JSON.parse(localStorage.getItem('susGameIds') || '{}');
       const gameId = savedGameIds[lobbyId];
       
@@ -247,7 +367,6 @@ export default function SUSGame() {
       
       console.log("Joining game:", { lobbyId, gameId });
       
-      // Set initial state
       setGameInfo({
         gameId,
         isHost: false,
@@ -268,6 +387,21 @@ export default function SUSGame() {
   };
 
   const handleStake = async () => {
+    if (demoMode) {
+      // Demo Mode - Just update state
+      setIsStaking(true);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      setGameInfo(prev => prev ? {
+        ...prev,
+        hasStaked: true
+      } : null);
+      
+      setIsStaking(false);
+      return;
+    }
+    
+    // Original wallet-based logic
     if (!gameInfo || !gameInfo.stakeAmount || !address) {
       console.error("Missing required data for staking:", { gameInfo: !!gameInfo, stakeAmount: gameInfo?.stakeAmount, address });
       return;
@@ -275,17 +409,8 @@ export default function SUSGame() {
     
     setIsStaking(true);
     try {
-      // Use the gameId from gameInfo directly
       const actualGameId = gameInfo.gameId;
       console.log("Using gameId for staking:", actualGameId);
-      
-      console.log("Attempting to stake:", {
-        originalId: gameInfo.gameId,
-        actualGameId,
-        stakeAmount: gameInfo.stakeAmount,
-        stakeAmountWei: parseEther(gameInfo.stakeAmount).toString(),
-        address
-      });
       
       await writeContract({
         address: SUS_GAME_CONTRACT_ADDRESS,
@@ -296,17 +421,11 @@ export default function SUSGame() {
       });
 
       console.log("Stake transaction submitted");
-
-      // Update gameInfo with the actual gameId if it was resolved
-      if (actualGameId !== gameInfo.gameId) {
-        setGameInfo(prev => prev ? { ...prev, gameId: actualGameId } : null);
-      }
-      
       console.log("Waiting for transaction confirmation...");
     } catch (err) {
       console.error("Failed to stake:", err);
       setError(`Failed to stake. ${err instanceof Error ? err.message : 'Make sure you have enough ETH for the stake amount and gas fees.'}`); 
-      throw err; // Re-throw so the UI can handle it
+      throw err;
     } finally {
       setIsStaking(false);
     }
@@ -315,6 +434,23 @@ export default function SUSGame() {
   const handleStartGame = async () => {
     if (!gameInfo) return;
     
+    if (demoMode) {
+      // Demo Mode - Start game and assign roles
+      setIsStartingGame(true);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setGameInfo(prev => prev ? {
+        ...prev,
+        state: GameState.PLAYING,
+        userRole: Math.random() > 0.5 ? "IMPOSTER" : "CREW" // Random role for demo
+      } : null);
+      
+      setCurrentScreen("playground");
+      setIsStartingGame(false);
+      return;
+    }
+    
+    // Original wallet-based logic
     setIsStartingGame(true);
     try {
       await writeContract({
@@ -325,8 +461,6 @@ export default function SUSGame() {
       });
       
       console.log("Start game transaction submitted");
-      // State will be updated by contract reading
-      // The useEffect will handle screen transition
     } catch (err) {
       console.error("Failed to start game:", err);
       setError("Failed to start game. Make sure you have enough players (minimum 3).");
@@ -338,6 +472,20 @@ export default function SUSGame() {
   const handleRug = async () => {
     if (!gameInfo) return;
     
+    if (demoMode) {
+      // Demo Mode - Imposter wins
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setGameInfo(prev => prev ? {
+        ...prev,
+        state: GameState.ENDED
+      } : null);
+      
+      setCurrentScreen("gameEnd");
+      return;
+    }
+    
+    // Original wallet-based logic
     try {
       await writeContract({
         address: SUS_GAME_CONTRACT_ADDRESS,
@@ -345,8 +493,6 @@ export default function SUSGame() {
         functionName: "rug",
         args: [gameInfo.gameId as `0x${string}`],
       });
-      
-      // Game end state will be updated by contract reading
     } catch (err) {
       console.error("Failed to rug:", err);
       setError("Failed to rug. Only the imposter can perform this action.");
@@ -356,6 +502,37 @@ export default function SUSGame() {
   const handleStartVote = async () => {
     if (!gameInfo) return;
     
+    if (demoMode) {
+      // Demo Mode - Start voting
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      setGameInfo(prev => prev ? {
+        ...prev,
+        state: GameState.VOTING,
+        voteTimeLeft: 30
+      } : null);
+      
+      setCurrentScreen("vote");
+      
+      // Start countdown
+      const countdown = setInterval(() => {
+        setGameInfo(prev => {
+          if (!prev || prev.voteTimeLeft <= 1) {
+            clearInterval(countdown);
+            // Auto-end voting when time runs out
+            if (prev && prev.voteTimeLeft <= 1) {
+              return { ...prev, state: GameState.ENDED };
+            }
+            return prev;
+          }
+          return { ...prev, voteTimeLeft: prev.voteTimeLeft - 1 };
+        });
+      }, 1000);
+      
+      return;
+    }
+    
+    // Original wallet-based logic
     try {
       await writeContract({
         address: SUS_GAME_CONTRACT_ADDRESS,
@@ -364,7 +541,6 @@ export default function SUSGame() {
         args: [gameInfo.gameId as `0x${string}`],
       });
       
-      // Voting state will be updated by contract reading
       setGameInfo(prev => prev ? { ...prev, voteTimeLeft: 30 } : null);
       setCurrentScreen("vote");
     } catch (err) {
@@ -376,6 +552,26 @@ export default function SUSGame() {
   const handleVote = async (playerIndex: number) => {
     if (!gameInfo) return;
     
+    if (demoMode) {
+      // Demo Mode - Cast vote and end game
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setGameInfo(prev => prev ? {
+        ...prev,
+        hasVoted: true,
+        votedFor: playerIndex,
+        state: GameState.ENDED
+      } : null);
+      
+      // Go to game end after short delay
+      setTimeout(() => {
+        setCurrentScreen("gameEnd");
+      }, 1500);
+      
+      return;
+    }
+    
+    // Original wallet-based logic
     try {
       await writeContract({
         address: SUS_GAME_CONTRACT_ADDRESS,
@@ -455,6 +651,8 @@ export default function SUSGame() {
           onCreateLobby={handleCreateLobby}
           onJoinLobby={handleJoinLobby}
           isCreatingLobby={isCreatingLobby}
+          demoMode={demoMode}
+          onToggleDemoMode={toggleDemoMode}
         />
       );
       

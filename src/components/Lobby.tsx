@@ -45,9 +45,13 @@ export function Lobby({
   const { address } = useAccount();
 
   const copyLobbyId = async () => {
-    // Extract the original lobbyId from localStorage mapping
-    const savedGameIds = JSON.parse(localStorage.getItem('susGameIds') || '{}');
-    const lobbyIdToCopy = Object.keys(savedGameIds).find(key => savedGameIds[key] === gameId) || gameId;
+    let lobbyIdToCopy;
+    if (gameId.startsWith('demo_')) {
+      lobbyIdToCopy = gameId; // Use demo ID directly
+    } else {
+      const savedGameIds = JSON.parse(localStorage.getItem('susGameIds') || '{}');
+      lobbyIdToCopy = Object.keys(savedGameIds).find(key => savedGameIds[key] === gameId) || gameId;
+    }
     
     await navigator.clipboard.writeText(lobbyIdToCopy);
     setCopied(true);
@@ -66,8 +70,14 @@ export function Lobby({
   const canStartGame = players.length >= 3 && isHost;
   
   // Get the original lobbyId for display
-  const savedGameIds = JSON.parse(localStorage.getItem('susGameIds') || '{}');
-  const originalLobbyId = Object.keys(savedGameIds).find(key => savedGameIds[key] === gameId) || gameId;
+  let originalLobbyId;
+  if (gameId.startsWith('demo_')) {
+    originalLobbyId = gameId; // Use demo ID directly
+  } else {
+    const savedGameIds = JSON.parse(localStorage.getItem('susGameIds') || '{}');
+    originalLobbyId = Object.keys(savedGameIds).find(key => savedGameIds[key] === gameId) || gameId;
+  }
+  
   const shortLobbyId = originalLobbyId.length > 16 
     ? originalLobbyId.slice(0, 8) + '...' + originalLobbyId.slice(-6)
     : originalLobbyId;
@@ -199,6 +209,14 @@ export function Lobby({
           <p>• Share the Lobby ID with friends to invite them</p>
           <p>• Minimum 3 players required to start</p>
           <p>• Maximum 10 players per game</p>
+          {gameId.startsWith('demo_') && (
+            <div className="mt-4 p-3 bg-blue-900/30 border border-blue-700 rounded-lg">
+              <p className="text-blue-400 text-sm font-semibold">🎮 Demo Mode</p>
+              <p className="text-blue-300 text-xs mt-1">
+                Game will auto-progress through all screens to show the full experience!
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
