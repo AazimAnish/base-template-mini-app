@@ -4,6 +4,9 @@ import { useState } from "react";
 import { APP_NAME } from "~/lib/constants";
 import sdk from "@farcaster/frame-sdk";
 import { useMiniApp } from "@neynar/react";
+import { useAccount, useDisconnect, useChainId } from "wagmi";
+import { Button } from "~/components/ui/Button";
+import { Copy, Check } from "lucide-react";
 
 type HeaderProps = {
   neynarUser?: {
@@ -14,8 +17,34 @@ type HeaderProps = {
 
 export function Header({ neynarUser }: HeaderProps) {
   const { context } = useMiniApp();
+  const { isConnected, address } = useAccount();
+  const { disconnect } = useDisconnect();
+  const chainId = useChainId();
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [hasClickedPfp, setHasClickedPfp] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyAddress = async () => {
+    if (address) {
+      try {
+        await navigator.clipboard.writeText(address);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy address:', err);
+      }
+    }
+  };
+
+  const getNetworkName = (chainId: number) => {
+    switch (chainId) {
+      case 84532: return "Base Sepolia";
+      case 8453: return "Base";
+      case 1: return "Ethereum";
+      case 10: return "Optimism";
+      default: return `Chain ${chainId}`;
+    }
+  };
 
   return (
     <div className="relative">
@@ -74,6 +103,51 @@ export function Header({ neynarUser }: HeaderProps) {
                     </>
                   )}
                 </div>
+                
+                {/* Wallet disconnect section */}
+                {isConnected && (
+                  <div className="pt-2 border-t border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs text-muted-foreground">
+                        Network:
+                      </div>
+                      <div className="text-xs text-blue-400 font-medium">
+                        {getNetworkName(chainId)}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs text-muted-foreground">
+                        Wallet:
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <span className="text-xs font-mono text-foreground">
+                          {address}
+                        </span>
+                        <button
+                          onClick={handleCopyAddress}
+                          className="p-1 hover:bg-muted rounded transition-colors"
+                          title={copied ? "Copied!" : "Copy address"}
+                        >
+                          {copied ? (
+                            <Check className="w-3 h-3 text-green-400" />
+                          ) : (
+                            <Copy className="w-3 h-3 text-muted-foreground hover:text-foreground" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => {
+                        disconnect();
+                        setIsUserDropdownOpen(false);
+                      }}
+                      variant="outline"
+                      className="w-full text-xs py-1 px-2"
+                    >
+                      Disconnect Wallet
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           )}
