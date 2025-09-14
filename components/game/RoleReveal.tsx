@@ -73,43 +73,43 @@ export function RoleReveal() {
             </CardContent>
           </Card>
         ) : (
-          <Card className={`border-4 text-center ${
+          <Card className={`border-2 text-center shadow-lg ${
             myRole === "traitor" 
-              ? "bg-red-900/50 border-red-500 animate-pulse" 
-              : "bg-blue-900/50 border-blue-500"
+              ? "bg-red-50 border-red-200" 
+              : "bg-blue-50 border-blue-200"
           }`}>
             <CardContent className="p-8">
-              <div className="mb-6">
-                <div className={`w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center ${
-                  myRole === "traitor" ? "bg-red-600" : "bg-blue-600"
+              <div className="mb-8">
+                <div className={`w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center ${
+                  myRole === "traitor" ? "bg-red-500" : "bg-blue-500"
                 }`}>
-                  <Shield className="h-12 w-12 text-white" />
+                  <Shield className="h-10 w-10 text-white" />
                 </div>
                 
-                <h2 className={`text-3xl font-bold mb-2 ${
-                  myRole === "traitor" ? "text-red-400" : "text-blue-400"
+                <h2 className={`text-3xl font-medium mb-4 ${
+                  myRole === "traitor" ? "text-red-700" : "text-blue-700"
                 }`}>
-                  You are {myRole === "traitor" ? "THE TRAITOR" : "CREW"}
+                  You are {myRole === "traitor" ? "the Traitor" : "Crew"}
                 </h2>
                 
-                <div className={`p-4 rounded-lg mb-4 ${
-                  myRole === "traitor" ? "bg-red-900/30" : "bg-blue-900/30"
+                <div className={`p-6 rounded-xl mb-6 ${
+                  myRole === "traitor" ? "bg-red-100" : "bg-blue-100"
                 }`}>
                   {myRole === "traitor" ? (
-                    <div className="text-red-200">
-                      <p className="font-semibold mb-2">Your Mission:</p>
-                      <ul className="text-sm space-y-1">
-                        <li>• Deceive the crew and survive voting rounds</li>
-                        <li>• OR click &quot;RUG POT&quot; at any time to steal everything</li>
-                        <li>• Act innocent - you win if they don&apos;t eliminate you</li>
+                    <div className="text-red-800">
+                      <p className="font-medium mb-3">Your Mission:</p>
+                      <ul className="text-sm space-y-2 text-left">
+                        <li>• Deceive the crew and survive voting</li>
+                        <li>• OR rug the pot at any time to steal all ETH</li>
+                        <li>• Act innocent—you win if not eliminated</li>
                       </ul>
                     </div>
                   ) : (
-                    <div className="text-blue-200">
-                      <p className="font-semibold mb-2">Your Mission:</p>
-                      <ul className="text-sm space-y-1">
-                        <li>• Find and eliminate the Traitor through discussion</li>
-                        <li>• Vote wisely - majority rules each round</li>
+                    <div className="text-blue-800">
+                      <p className="font-medium mb-3">Your Mission:</p>
+                      <ul className="text-sm space-y-2 text-left">
+                        <li>• Find and eliminate the traitor through discussion</li>
+                        <li>• Vote wisely—majority rules each round</li>
                         <li>• Work together but trust no one completely</li>
                       </ul>
                     </div>
@@ -118,8 +118,8 @@ export function RoleReveal() {
               </div>
               
               <div className="text-center">
-                <p className="text-gray-300 mb-2">Game starting in:</p>
-                <div className="text-4xl font-bold text-white">
+                <p className="text-gray-600 mb-2 font-medium">Game starting in:</p>
+                <div className="text-5xl font-light text-black">
                   {countdown}
                 </div>
               </div>

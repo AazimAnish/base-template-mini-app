@@ -23,14 +23,14 @@ export function PlayersList({
       {players.map((player, index) => (
         <div
           key={player.id}
-          className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+          className={`flex items-center gap-3 p-4 rounded-xl transition-all ${
             player.isEliminated 
-              ? "bg-gray-700/50 opacity-60" 
+              ? "bg-gray-100 opacity-60" 
               : player.id === myPlayerId
-              ? "bg-blue-600/20 border border-blue-500/50"
+              ? "bg-blue-50 border border-blue-200"
               : selectedPlayer === player.id
-              ? "bg-red-600/20 border border-red-500/50"
-              : "bg-gray-700 hover:bg-gray-600"
+              ? "bg-red-50 border border-red-200"
+              : "bg-gray-50 hover:bg-gray-100"
           } ${
             showVoteButton && !player.isEliminated && player.id !== myPlayerId 
               ? "cursor-pointer" 
@@ -44,17 +44,17 @@ export function PlayersList({
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={player.avatar} />
-            <AvatarFallback className="bg-gray-600 text-white">
+            <AvatarFallback className="bg-gray-200 text-gray-700">
               {(player.name || player.address)?.[0]?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
           
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <p className="font-medium text-white">
+              <p className="font-medium text-black">
                 {player.name || `Player ${index + 1}`}
                 {player.id === myPlayerId && (
-                  <span className="text-blue-400 text-sm ml-1">(You)</span>
+                  <span className="text-blue-600 text-sm ml-1">(You)</span>
                 )}
               </p>
               {index === 0 && isHost && (
@@ -64,7 +64,7 @@ export function PlayersList({
                 <Skull className="h-4 w-4 text-red-500" />
               )}
             </div>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-600">
               {player.address ? 
                 `${player.address.slice(0, 6)}...${player.address.slice(-4)}` : 
                 "Connecting..."
@@ -74,13 +74,13 @@ export function PlayersList({
           
           <div className="flex items-center gap-2">
             {player.isEliminated ? (
-              <Badge variant="destructive">
+              <Badge variant="destructive" className="bg-red-100 text-red-800">
                 Eliminated
               </Badge>
             ) : (
               <Badge 
                 variant={player.isReady ? "default" : "secondary"}
-                className={player.isReady ? "bg-green-600" : "bg-yellow-600"}
+                className={player.isReady ? "bg-green-100 text-green-800" : "bg-orange-100 text-orange-800"}
               >
                 {player.isReady ? "Alive" : "Waiting"}
               </Badge>
@@ -90,7 +90,11 @@ export function PlayersList({
               <Button
                 size="sm"
                 variant={selectedPlayer === player.id ? "destructive" : "outline"}
-                className="h-8"
+                className={`h-8 ${
+                  selectedPlayer === player.id 
+                    ? "bg-red-600 hover:bg-red-700 text-white" 
+                    : "border-gray-300 hover:bg-gray-50 text-gray-700"
+                }`}
               >
                 {selectedPlayer === player.id ? "Selected" : "Vote"}
               </Button>

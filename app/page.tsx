@@ -50,78 +50,78 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-950 via-black to-gray-900 p-4">
-      <header className="flex justify-between items-center mb-8">
-        <div className="flex items-center gap-2">
-          <Shield className="h-8 w-8 text-red-500" />
-          <h1 className="text-3xl font-bold text-white">SUS</h1>
-          <Badge variant="destructive">BETA</Badge>
+    <div className="min-h-screen bg-white">
+      <header className="px-4 py-6 max-w-6xl mx-auto">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
+              <Shield className="h-4 w-4 text-white" />
+            </div>
+            <h1 className="text-2xl font-semibold text-black">SUS</h1>
+            <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-xs">Beta</Badge>
+          </div>
+          <Wallet />
         </div>
-        <Wallet />
       </header>
 
-      <div className="max-w-4xl mx-auto">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h2 className="text-5xl font-bold text-white mb-4">
-            Trust No One.
-            <span className="text-red-500"> Stake Everything.</span>
+      <main className="px-4 pb-20 max-w-6xl mx-auto">
+        <section className="text-center py-16 max-w-3xl mx-auto">
+          <h2 className="text-5xl md:text-6xl font-light text-black mb-6 leading-tight">
+            Social deduction.
+            <br />
+            <span className="font-medium">Reinvented.</span>
           </h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            A multiplayer social deduction game where players stake ETH and try to identify the Traitor among them. 
-            Will you work together to find the impostor, or will you be the one who rugs the pot?
+          <p className="text-lg text-gray-600 mb-12 leading-relaxed max-w-2xl mx-auto">
+            A multiplayer game where trust is earned and ETH is at stake. 
+            Find the traitor, or become one.
           </p>
           
-          {/* Game Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <Card className="bg-gray-800 border-gray-700">
-              <CardContent className="p-6 text-center">
-                <Users className="h-12 w-12 text-blue-500 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-white mb-2">3-10 Players</h3>
-                <p className="text-gray-300 text-sm">
-                  Gather your friends or play with strangers in fast-paced rounds
-                </p>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Users className="h-6 w-6 text-gray-700" />
+              </div>
+              <h3 className="font-medium text-black mb-2">3-10 Players</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Quick rounds with friends or strangers
+              </p>
+            </div>
             
-            <Card className="bg-gray-800 border-gray-700">
-              <CardContent className="p-6 text-center">
-                <Zap className="h-12 w-12 text-yellow-500 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-white mb-2">Real ETH Stakes</h3>
-                <p className="text-gray-300 text-sm">
-                  Winners split the pot, traitors can rug it all - real money, real consequences
-                </p>
-              </CardContent>
-            </Card>
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Zap className="h-6 w-6 text-gray-700" />
+              </div>
+              <h3 className="font-medium text-black mb-2">Real Stakes</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Winners share the ETH pot
+              </p>
+            </div>
             
-            <Card className="bg-gray-800 border-gray-700">
-              <CardContent className="p-6 text-center">
-                <Gamepad2 className="h-12 w-12 text-green-500 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-white mb-2">5min Games</h3>
-                <p className="text-gray-300 text-sm">
-                  Quick rounds with real-time chat, voting, and dramatic reveals
-                </p>
-              </CardContent>
-            </Card>
+            <div className="text-center">
+              <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Gamepad2 className="h-6 w-6 text-gray-700" />
+              </div>
+              <h3 className="font-medium text-black mb-2">5 Minutes</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Fast-paced rounds with real-time interaction
+              </p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        {/* Game Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Create Game */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Shield className="h-5 w-5 text-green-500" />
-                Create New Game
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <Card className="border border-gray-200 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-medium text-black">
+                Create Game
               </CardTitle>
-              <CardDescription className="text-gray-300">
-                Start a new lobby and invite friends
+              <CardDescription className="text-gray-600">
+                Start a new lobby and set the stakes
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div>
-                <label className="text-sm text-gray-300 mb-2 block">
+                <label className="text-sm font-medium text-gray-900 mb-3 block">
                   Stake Amount (ETH)
                 </label>
                 <Input
@@ -131,19 +131,19 @@ export default function Home() {
                   max="1"
                   value={stakeAmount}
                   onChange={(e) => setStakeAmount(e.target.value)}
-                  className="bg-gray-700 border-gray-600 text-white"
+                  className="h-12 border-gray-300 focus:border-black focus:ring-1 focus:ring-black text-black placeholder:text-gray-400 bg-white"
                   placeholder="0.01"
                 />
               </div>
               
               <div>
-                <label className="text-sm text-gray-300 mb-2 block">
+                <label className="text-sm font-medium text-gray-900 mb-3 block">
                   Max Players
                 </label>
                 <select
                   value={maxPlayers}
                   onChange={(e) => setMaxPlayers(Number(e.target.value))}
-                  className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+                  className="w-full h-12 px-3 border border-gray-300 rounded-md text-black focus:border-black focus:ring-1 focus:ring-black bg-white"
                 >
                   {[3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                     <option key={num} value={num}>{num} players</option>
@@ -154,53 +154,51 @@ export default function Home() {
               <Button
                 onClick={handleCreateGame}
                 disabled={!isConnected || isCreating}
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
               >
-                {isCreating ? "Creating..." : `Create Game (${stakeAmount} ETH)`}
+                {isCreating ? "Creating..." : `Create Game`}
               </Button>
               
               {!isConnected && (
-                <p className="text-sm text-gray-400 text-center">
-                  Connect your wallet to create a game
+                <p className="text-sm text-gray-600 text-center">
+                  Connect wallet to create
                 </p>
               )}
             </CardContent>
           </Card>
 
-          {/* Join Game */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Users className="h-5 w-5 text-blue-500" />
-                Join Existing Game
+          <Card className="border border-gray-200 shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl font-medium text-black">
+                Join Game
               </CardTitle>
-              <CardDescription className="text-gray-300">
+              <CardDescription className="text-gray-600">
                 Enter a lobby ID to join friends
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div>
-                <label className="text-sm text-gray-300 mb-2 block">
+                <label className="text-sm font-medium text-gray-900 mb-3 block">
                   Lobby ID
                 </label>
                 <Input
                   type="text"
                   value={lobbyId}
                   onChange={(e) => setLobbyId(e.target.value.toUpperCase())}
-                  className="bg-gray-700 border-gray-600 text-white font-mono"
+                  className="h-12 border-gray-300 focus:border-black focus:ring-1 focus:ring-black font-mono text-center tracking-widest text-black placeholder:text-gray-400 bg-white"
                   placeholder="ABCD12"
                   maxLength={6}
                 />
               </div>
               
-              <div className="bg-gray-700 p-3 rounded-lg">
-                <p className="text-sm text-gray-300">
-                  <strong>How to play:</strong>
+              <div className="bg-gray-50 p-4 rounded-xl">
+                <p className="text-sm font-medium text-gray-900 mb-2">
+                  How to play:
                 </p>
-                <ul className="text-sm text-gray-400 mt-1 space-y-1">
-                  <li>• 1 player is secretly the Traitor</li>
-                  <li>• Crew wins by eliminating the Traitor</li>
-                  <li>• Traitor wins by surviving or rugging the pot</li>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>• One player is secretly the traitor</li>
+                  <li>• Crew wins by eliminating the traitor</li>
+                  <li>• Traitor wins by surviving or rugging</li>
                   <li>• Winners split the ETH pot</li>
                 </ul>
               </div>
@@ -208,28 +206,27 @@ export default function Home() {
               <Button
                 onClick={handleJoinGame}
                 disabled={!isConnected || !lobbyId || isJoining}
-                className="w-full bg-blue-600 hover:bg-blue-700"
+                className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium"
               >
                 {isJoining ? "Joining..." : "Join Game"}
               </Button>
               
               {!isConnected && (
-                <p className="text-sm text-gray-400 text-center">
-                  Connect your wallet to join a game
+                <p className="text-sm text-gray-600 text-center">
+                  Connect wallet to join
                 </p>
               )}
             </CardContent>
           </Card>
-        </div>
+        </section>
 
-        {/* Footer */}
-        <footer className="text-center mt-12 text-gray-400 text-sm">
-          <p>Built on Base • Smart contracts handle all ETH automatically</p>
-          <p className="mt-1">
-            <strong className="text-red-400">Warning:</strong> This is a game of deception. Only play with ETH you can afford to lose.
+        <footer className="text-center mt-16 pt-8 border-t border-gray-200">
+          <p className="text-sm text-gray-500 mb-2">Built on Base</p>
+          <p className="text-xs text-gray-400 max-w-md mx-auto">
+            This is a game of deception. Only play with ETH you can afford to lose.
           </p>
         </footer>
-      </div>
+      </main>
     </div>
   );
 }

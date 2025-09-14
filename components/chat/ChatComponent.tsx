@@ -58,30 +58,38 @@ export function ChatComponent({ disabled = false }: ChatComponentProps) {
               }`}
             >
               {msg.type === "system" ? (
-                <div className="bg-gray-600 text-gray-200 px-3 py-1 rounded-full text-sm max-w-xs text-center">
+                <div className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm max-w-xs text-center">
                   {msg.content}
                 </div>
               ) : msg.type === "elimination" ? (
-                <div className="bg-red-600 text-white px-3 py-1 rounded-full text-sm max-w-xs text-center">
+                <div className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm max-w-xs text-center">
                   ⚰️ {msg.content}
                 </div>
               ) : msg.type === "victory" ? (
-                <div className="bg-yellow-600 text-white px-3 py-1 rounded-full text-sm max-w-xs text-center">
+                <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm max-w-xs text-center">
                   🏆 {msg.content}
                 </div>
               ) : (
                 <div className={`max-w-xs ${
                   msg.playerId === useGameStore.getState().myPlayerId 
                     ? "bg-blue-600 text-white" 
-                    : "bg-gray-700 text-gray-100"
+                    : "bg-gray-100 text-gray-900"
                 } rounded-lg p-3`}>
-                  <div className="text-xs text-gray-300 mb-1">
+                  <div className={`text-xs mb-1 ${
+                    msg.playerId === useGameStore.getState().myPlayerId
+                      ? "text-blue-200"
+                      : "text-gray-600"
+                  }`}>
                     {msg.playerName}
                   </div>
                   <div className="text-sm break-words">
                     {msg.content}
                   </div>
-                  <div className="text-xs text-gray-400 mt-1">
+                  <div className={`text-xs mt-1 ${
+                    msg.playerId === useGameStore.getState().myPlayerId
+                      ? "text-blue-200"
+                      : "text-gray-500"
+                  }`}>
                     {new Date(msg.timestamp).toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit'
@@ -95,11 +103,10 @@ export function ChatComponent({ disabled = false }: ChatComponentProps) {
         </div>
       </ScrollArea>
 
-      {/* Input */}
-      <div className="p-4 border-t border-gray-700">
+      <div className="p-4 border-t border-gray-200">
         {disabled ? (
-          <div className="bg-gray-700 p-3 rounded-lg text-center">
-            <p className="text-gray-400 text-sm">
+          <div className="bg-gray-50 p-3 rounded-lg text-center">
+            <p className="text-gray-600 text-sm">
               You cannot participate in chat while eliminated
             </p>
           </div>
@@ -111,14 +118,14 @@ export function ChatComponent({ disabled = false }: ChatComponentProps) {
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
-              className="flex-1 bg-gray-700 border-gray-600 text-white"
+              className="flex-1 bg-white border-gray-300 text-black placeholder:text-gray-400"
               maxLength={200}
             />
             <Button
               onClick={handleSend}
               disabled={!message.trim()}
               size="sm"
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-black hover:bg-gray-800 text-white"
             >
               <Send className="h-4 w-4" />
             </Button>
