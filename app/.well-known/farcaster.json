@@ -1,0 +1,33 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjg3NDk4OCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweGFGNWY0MjVBZTI4NDdFQWJlOTE5MzgzQjZlQTU5MUJjRTgwOGIyREYifQ",
+    "payload": "eyJkb21haW4iOiJzdXNvbmJhc2UudmVyY2VsLmFwcCJ9",
+    "signature": "MHgzYjA3ZDJkZjExNDM4NTI2NTNmMWIyYjE1OTk0YjU5NTQ5NGU5MWU2ZTVjZWZlOTIwMTQ4ZjNhNmZiNWQ5NTdjMWUzYzJkZjQxNTEyM2YxMzJhMWRlZWU5M2VjNmZlNmJkMTA4ZDUxODljY2M3YjllMTViYzNkZmU2NzJjYTgzNzFi"
+  },
+  "frame": {
+    "version": "1",
+    "name": "SUS",
+    "subtitle": "Social Deduction Game",
+    "description": "A multiplayer social deduction game where players bet and try to identify the Traitor among them. Work together to find the impostor, or be the one who takes it all!",
+    "iconUrl": "https://susonbase.vercel.app/icon.png",
+    "homeUrl": "https://susonbase.vercel.app",
+    "imageUrl": "https://susonbase.vercel.app/icon.png",
+    "screenshotUrls": [
+      "https://susonbase.vercel.app/icon.png"
+    ],
+    "buttonTitle": "Play Game",
+    "splashImageUrl": "https://susonbase.vercel.app/icon.png",
+    "splashBackgroundColor": "#7f1d1d",
+    "webhookUrl": "https://susonbase.vercel.app/api/webhook",
+    "primaryCategory": "game",
+    "tags": ["game", "social", "ethereum", "multiplayer", "deduction"],
+    "heroImageUrl": "https://susonbase.vercel.app/icon.png",
+    "tagline": "Trust No One. Stake Everything.",
+    "ogTitle": "SUS - Social Deduction Game on Base",
+    "ogDescription": "Play SUS - a multiplayer social deduction game where players bet and hunt for traitors. Winners split the prize, traitors can take it all!",
+    "ogImageUrl": "https://susonbase.vercel.app/icon.png",
+    "noindex": false,
+    "enableDeveloperMode": true,
+    "postUrl": "https://susonbase.vercel.app/api/share"
+  }
+}
