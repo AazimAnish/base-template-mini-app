@@ -644,7 +644,7 @@ export class EdgeCaseManager {
   }
 
   // Utility Methods (to be implemented with actual checks)
-  private checkCondition(condition: string): boolean {
+  private checkCondition(): boolean {
     // Implementation would check various game conditions
     return true; // Placeholder
   }

@@ -20,6 +20,25 @@ export interface BatchOperation {
   totalSavings: number;
 }
 
+export interface GasCostEstimate {
+  current: {
+    gasUnits: number;
+    gasCost: number;
+    usdCost: number;
+  };
+  optimized: {
+    gasUnits: number;
+    gasCost: number;
+    usdCost: number;
+  };
+  savings: {
+    gasUnits: number;
+    gasCost: number;
+    usdCost: number;
+    percent: number;
+  };
+}
+
 /**
  * Gas optimization analysis for current smart contract
  */
@@ -297,8 +316,8 @@ export class GasOptimizer {
   /**
    * Estimate gas costs for different network conditions
    */
-  estimateGasCosts(gasPrice: number = 20, ethPrice: number = 3000): Record<string, any> {
-    const results: Record<string, any> = {};
+  estimateGasCosts(gasPrice: number = 20, ethPrice: number = 3000): Record<string, GasCostEstimate> {
+    const results: Record<string, GasCostEstimate> = {};
     
     for (const analysis of GAS_ANALYSIS) {
       results[analysis.function] = {
@@ -381,7 +400,6 @@ export class GasOptimizer {
    */
   generateOptimizationReport(): string {
     const savings = this.calculateTotalSavings();
-    const costs = this.estimateGasCosts();
     
     return `
 # Gas Optimization Report

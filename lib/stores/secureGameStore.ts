@@ -2,8 +2,8 @@
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { useAccount, useWriteContract, useReadContract } from 'wagmi';
-import { parseEther, formatEther } from 'viem';
+import { useAccount, useWriteContract } from 'wagmi';
+import { parseEther } from 'viem';
 import { SUS_GAME_CONTRACT } from '../contracts';
 import { toast } from 'sonner';
 
@@ -459,7 +459,6 @@ export const useSecureGameStore = create<GameData & GameActions>()(
 // Hook for contract integration
 export function useContractIntegration() {
   const { address } = useAccount();
-  const store = useSecureGameStore();
   
   // Real contract hooks would go here
   const { writeContract } = useWriteContract();
