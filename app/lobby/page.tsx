@@ -21,6 +21,7 @@ import {
   Crown
 } from "lucide-react";
 import { toast } from "sonner";
+import { useMiniApp, useGameFeatures, useSocialFeatures } from "@/lib/miniapp/hooks";
 
 export default function LobbyPage() {
   const router = useRouter();
@@ -38,6 +39,11 @@ export default function LobbyPage() {
     leaveGame,
     phase
   } = useGameStore();
+
+  // Mini App integration
+  const { isInFarcaster, hapticFeedback } = useMiniApp();
+  const { notifyGameStart } = useGameFeatures();
+  const { inviteToLobby } = useSocialFeatures();
 
   const [copied, setCopied] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
@@ -59,6 +65,7 @@ export default function LobbyPage() {
     
     try {
       await navigator.clipboard.writeText(lobbyId);
+      await hapticFeedback('selection');
       setCopied(true);
       toast.success("Lobby ID copied to clipboard!");
       setTimeout(() => setCopied(false), 2000);
@@ -69,15 +76,26 @@ export default function LobbyPage() {
 
   const handleStartGame = async () => {
     if (players.length < 3) {
+      await hapticFeedback('notification', 'error');
       toast.error("Need at least 3 players to start!");
       return;
     }
 
     try {
       setIsStarting(true);
+      await hapticFeedback('impact', 'heavy');
       await startGame();
+      
+      // Notify all players that game is starting
+      if (lobbyId) {
+        await notifyGameStart(lobbyId);
+      }
+      
+      await hapticFeedback('notification', 'success');
+      toast.success("Game started!");
     } catch (error) {
       console.error("Failed to start game:", error);
+      await hapticFeedback('notification', 'error');
       toast.error("Failed to start game");
     } finally {
       setIsStarting(false);
@@ -212,29 +230,41 @@ export default function LobbyPage() {
                     <p className="text-sm font-medium text-gray-900 mb-3">
                       Share with friends:
                     </p>
-                    <div className="flex items-center justify-center gap-3">
-                      <code className="bg-white px-4 py-2 rounded-lg border font-mono text-lg text-black tracking-wider">
-                        {lobbyId}
-                      </code>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={handleCopyLobbyId} 
-                        className="border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-4 py-2"
-                        title={copied ? "Lobby ID copied!" : "Copy lobby ID to clipboard"}
-                      >
-                        {copied ? (
-                          <>
-                            <CheckCircle2 className="h-4 w-4 mr-1" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4 mr-1" />
-                            Copy
-                          </>
-                        )}
-                      </Button>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-center gap-3">
+                        <code className="bg-white px-4 py-2 rounded-lg border font-mono text-lg text-black tracking-wider">
+                          {lobbyId}
+                        </code>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={handleCopyLobbyId} 
+                          className="border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-4 py-2"
+                          title={copied ? "Lobby ID copied!" : "Copy lobby ID to clipboard"}
+                        >
+                          {copied ? (
+                            <>
+                              <CheckCircle2 className="h-4 w-4 mr-1" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4 mr-1" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      
+                      {isInFarcaster && lobbyId && (
+                        <Button
+                          size="sm"
+                          onClick={() => inviteToLobby(lobbyId)}
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                        >
+                          📢 Share Game
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>

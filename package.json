@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@coinbase/onchainkit": "1.0.0-alpha.19",
-    "@farcaster/miniapp-sdk": "^0.1.8",
+    "@farcaster/miniapp-sdk": "^0.1.10",
     "@nomicfoundation/hardhat-toolbox": "^6.1.0",
     "@nomicfoundation/hardhat-viem": "^3.0.0",
     "@nomiclabs/hardhat-ethers": "^2.2.3",

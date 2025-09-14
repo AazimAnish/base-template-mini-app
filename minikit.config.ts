@@ -11,11 +11,14 @@ export const minikitConfig = {
     payload: "",
     signature: "",
   },
+  baseBuilder: {
+    allowedAddresses: ["0x276421D209124cE6c74F211AEE1cF6A1B5Ce2903"]
+  },
   frame: {
     version: "1",
     name: "SUS",
     subtitle: "Social Deduction Game",
-    description: "A multiplayer social deduction game where players stake ETH and try to identify the Traitor among them. Will you work together to find the impostor, or will you be the one who rugs the pot?",
+    description: "A multiplayer social deduction game where players bet and try to identify the Traitor among them. Work together to find the impostor, or be the one who takes it all!",
     screenshotUrls: [
       `${ROOT_URL}/screenshot.png`,
     ],
@@ -29,7 +32,11 @@ export const minikitConfig = {
     heroImageUrl: `${ROOT_URL}/hero.png`,
     tagline: "Trust No One. Stake Everything.",
     ogTitle: "SUS - Social Deduction Game on Base",
-    ogDescription: "Play SUS - a multiplayer social deduction game where players stake ETH and hunt for traitors. Winners split the pot, traitors can rug it all!",
+    ogDescription: "Play SUS - a multiplayer social deduction game where players bet and hunt for traitors. Winners split the prize, traitors can take it all!",
     ogImageUrl: `${ROOT_URL}/hero.png`,
+    noindex: false, // Set to true during testing
+    enableDeveloperMode: true,
+    buttonTitle: "Play Game",
+    postUrl: `${ROOT_URL}/api/share`,
   },
 } as const;
