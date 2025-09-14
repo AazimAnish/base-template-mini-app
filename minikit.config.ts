@@ -7,9 +7,9 @@ const ROOT_URL = process.env.NEXT_PUBLIC_URL || process.env.VERCEL_URL || "https
  */
 export const minikitConfig = {
   accountAssociation: {
-    header: "",
-    payload: "",
-    signature: "",
+    header: process.env.FARCASTER_HEADER || "",
+    payload: process.env.FARCASTER_PAYLOAD || "",
+    signature: process.env.FARCASTER_SIGNATURE || "",
   },
   baseBuilder: {
     allowedAddresses: ["0x276421D209124cE6c74F211AEE1cF6A1B5Ce2903"]
